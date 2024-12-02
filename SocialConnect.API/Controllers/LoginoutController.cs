@@ -60,7 +60,7 @@ namespace SocialConnect.API.Controllers
                     #endregion
                 }
                 else
-                    return Unauthorized();
+                    return BadRequest(ModelState);
             }
             else
                 return BadRequest(ModelState);
