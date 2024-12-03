@@ -34,8 +34,10 @@ namespace SocialConnect.Repository.Data
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<CommentReact> ComsmentReact { get; set; }
         public virtual DbSet<Message> Massages { get; set; }
-       // public virtual DbSet<Conversation> Conversation { get; set; }
+        public virtual DbSet<FrindsUser> FrindsUsers { get; set; }
+        public virtual DbSet<Notficiation> Notficiations { get; set; }
 
+        
         public virtual DbSet<massageReact> massageReacts { get; set; }
         public virtual DbSet<React> React { get; set; }
         public virtual DbSet<Post> Posts { get; set; }

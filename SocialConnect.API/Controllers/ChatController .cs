@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+
+
 using SocialConnect.Core.DTO;
 using SocialConnect.Core.Models;
 using SocialConnect.Service;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
+using SocialConnect.API.Helpers;
 
 namespace SocialConnect.API.Controllers
 {
@@ -13,10 +17,12 @@ namespace SocialConnect.API.Controllers
     public class ChatController : ControllerBase
     {
         private readonly UnitOfwork _unitOfWork;
+        private readonly IHubContext<MyHub> massageHub;
 
-        public ChatController(UnitOfwork unitOfWork)
+        public ChatController(UnitOfwork unitOfWork,IHubContext<MyHub> MassageHub)
         {
             _unitOfWork = unitOfWork;
+            massageHub = MassageHub;
         }
 
         [HttpGet("conversations/{userId}")]
@@ -47,7 +53,7 @@ namespace SocialConnect.API.Controllers
         )]
         [SwaggerResponse(201, "Massage Send successfully", typeof(Message))]
         [SwaggerResponse(400, "Invalid task data")]
-        public IActionResult SendMessage(string userId,[FromBody] string massage)
+        public async Task <IActionResult> SendMessage(string userId,[FromBody] string massage)
         {
             string MyId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? HttpContext.Session.GetString("UserId");
 
@@ -62,6 +68,8 @@ namespace SocialConnect.API.Controllers
             };
 
             _unitOfWork.Conversations.AddMessage(message);
+            //signalR
+           await massageHub.Clients.User(userId).SendAsync($"massage From{MyId}", message);
             _unitOfWork.Save();
             return Ok(message);
         }

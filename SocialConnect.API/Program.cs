@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SocialConnect.API.Helpers;
 using SocialConnect.Repository.Data;
 using SocialConnect.Service;
 using System.Security.Claims;
@@ -20,6 +21,7 @@ namespace SocialConnect.API
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddSignalR();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             //builder.Services.AddSwaggerGen();
@@ -138,6 +140,7 @@ namespace SocialConnect.API
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapHub<MyHub>("/myhub");
 
             app.Run();
         }

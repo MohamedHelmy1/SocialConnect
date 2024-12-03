@@ -12,11 +12,14 @@ namespace SocialConnect.Service
         GenericRepository<Post> Postrepository;
         CommentRepository Comment;
         PostRep PostRep;
-
+        FrindAndFolloingAndNotficationUserRep FrindAndFolloingAndNotficationUserRep;
         ConversationRepository<Message> conversationRepository;
         GenericRepository<Comment> Commentrepository;
         GenericRepository<CommentReact> CommentReactsrepository;
         GenericRepository<postReacts> PostReactsrepository;
+        GenericRepository<FrindsUser> FrindsUserrepository;
+        GenericRepository<FollowingUser> FollowingUserReactsrepository;
+        GenericRepository<Notficiation> Notficationrepo ;
 
 
         public UnitOfwork(ApplicationDbContext db )
@@ -100,8 +103,51 @@ namespace SocialConnect.Service
                 return Commentrepository;
             }
         }
+        public GenericRepository<FrindsUser> frindsUserrepository
+        {
+            get
+            {
+                if (FrindsUserrepository == null)
+                {
+                    FrindsUserrepository = new GenericRepository<FrindsUser>(db);
+                }
+                return FrindsUserrepository;
+            }
+        }
+        public GenericRepository<FollowingUser> followingUserReactsrepository
+        {
+            get
+            {
+                if (FollowingUserReactsrepository == null)
+                {
+                    FollowingUserReactsrepository = new GenericRepository<FollowingUser>(db);
+                }
+                return FollowingUserReactsrepository;
+            }
+        }
+        public GenericRepository<Notficiation> notficationrepo
+        {
+            get
+            {
+                if (Notficationrepo == null)
+                {
+                    Notficationrepo = new GenericRepository<Notficiation>(db);
+                }
+                return Notficationrepo;
+            }
+        }
 
-
+        public FrindAndFolloingAndNotficationUserRep frindAndFolloingAndNotficationUserRep
+        {
+            get
+            {
+                if (FrindAndFolloingAndNotficationUserRep == null)
+                {
+                    FrindAndFolloingAndNotficationUserRep = new FrindAndFolloingAndNotficationUserRep(db);
+                }
+                return FrindAndFolloingAndNotficationUserRep;
+            }
+        }
         public void Save()
         {
             db.SaveChanges();
