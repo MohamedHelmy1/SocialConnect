@@ -2,6 +2,7 @@
 using SocialConnect.Core.Models;
 using SocialConnect.Repository.Data;
 using SocialConnect.Service;
+using SocialConnect.Service.UnitOfWork;
 
 namespace SocialConnect.Service
 {
@@ -9,6 +10,7 @@ namespace SocialConnect.Service
     {
         ApplicationDbContext db;
         GenericRepository<Post> Postrepository;
+        CommentRepository Comment;
        
         GenericRepository<Comment> Commentrepository;
         GenericRepository<CommentReact> CommentReactsrepository;
@@ -28,6 +30,17 @@ namespace SocialConnect.Service
                     Postrepository = new GenericRepository<Post>(db);
                 }
                 return Postrepository;
+            }
+        }
+        public CommentRepository comment
+        {
+            get
+            {
+                if (Comment == null)
+                {
+                    Comment = new CommentRepository(db);
+                }
+                return Comment;
             }
         }
         public GenericRepository<postReacts> postReactsrepository

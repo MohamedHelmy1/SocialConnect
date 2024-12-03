@@ -40,7 +40,7 @@ namespace SocialConnect.API.Controllers
 
             if (ModelState.IsValid)
             {
-                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)?? HttpContext.Session.GetString("UserId");
                 var post = new Comment()
                 {
                     Id= $"{Guid.NewGuid():N}_{DateTime.UtcNow:yyyyMMddHHmmssfff}",
@@ -81,7 +81,7 @@ namespace SocialConnect.API.Controllers
 
             if (ModelState.IsValid)
             {
-                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)?? HttpContext.Session.GetString("UserId");
                 var post = new CommentReact()
                 {
                     Id = $"{Guid.NewGuid():N}_{DateTime.UtcNow:yyyyMMddHHmmssfff}",
@@ -118,7 +118,7 @@ namespace SocialConnect.API.Controllers
             {
                 return BadRequest("post not Found.");
             }
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)?? HttpContext.Session.GetString("UserId");
             if (userId != CommentExists.useId_fk)
             {
                 return BadRequest("Post not Access.");
@@ -164,6 +164,17 @@ namespace SocialConnect.API.Controllers
             db.commentReactsrepository.Delete(com);
             db.Save();
             return Ok();
+        }
+        #endregion
+        #region Get By ID
+        [HttpGet("{id}")]
+        [Authorize(Roles = "User")]
+        public IActionResult Getbyid(string id)
+        {
+            var post = db.comment.GetCommentByPostId(id);
+            if (post == null) return NotFound();
+          
+            return Ok(post);
         }
         #endregion
 

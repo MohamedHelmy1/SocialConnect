@@ -34,7 +34,6 @@ namespace SocialConnect.API.Controllers
                     Title = post.Title,
                     Description = post.Description,
                     useId_fk = post.useId_fk,
-                    comments=post.comments,
                     countReact=post.Reacts.Count()
                     
 
@@ -69,7 +68,7 @@ namespace SocialConnect.API.Controllers
         #endregion
         #region Add Post
         [HttpPost]
-       // [Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [SwaggerResponse(201, "post created", typeof(Post))]
         [SwaggerResponse(400, "Post not found or not valid data")]
         [Consumes("application/json")]
@@ -86,8 +85,8 @@ namespace SocialConnect.API.Controllers
 
             if (ModelState.IsValid)
             {
-                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                string userId2 = HttpContext.Session.GetString("UserId");
+                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)?? HttpContext.Session.GetString("UserId");
+                
                 var post = new Post()
                 {
                     Id= $"{Guid.NewGuid():N}_{DateTime.UtcNow:yyyyMMddHHmmssfff}",
@@ -122,7 +121,7 @@ namespace SocialConnect.API.Controllers
             {
                 return BadRequest("post not Found.");
             }
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)?? HttpContext.Session.GetString("UserId");
             if (userId != PostExists.useId_fk)
             {
                 return BadRequest("Post not Access.");
@@ -176,7 +175,7 @@ namespace SocialConnect.API.Controllers
 
             if (ModelState.IsValid)
             {
-                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)?? HttpContext.Session.GetString("UserId");
                 var post = new postReacts()
                 {
                     Id = $"{Guid.NewGuid():N}_{DateTime.UtcNow:yyyyMMddHHmmssfff}",
