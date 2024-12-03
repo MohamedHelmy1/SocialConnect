@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SocialConnect.Repository.Data;
 
@@ -11,9 +12,11 @@ using SocialConnect.Repository.Data;
 namespace SocialConnect.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241202231622_v6")]
+    partial class v6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,15 +57,13 @@ namespace SocialConnect.Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f620f23e-0799-48a0-a5a4-a8fbeb4c0d24",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
+                            Id = "566f7a24-8980-4195-b43f-2e55a00975bd",
+                            Name = "Admin"
                         },
                         new
                         {
-                            Id = "73e91fdc-0d71-4081-a984-8ddf0690b9c2",
-                            Name = "User",
-                            NormalizedName = "USER"
+                            Id = "e74713b6-46e6-4295-bd2a-25f41221d6ef",
+                            Name = "User"
                         });
                 });
 

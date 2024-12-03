@@ -26,8 +26,8 @@ namespace SocialConnect.Repository.Data
 
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             builder.Entity<IdentityRole>().HasData(
-                new IdentityRole("Admin"),
-                new IdentityRole("User"));
+                new IdentityRole() { Name= "Admin" ,NormalizedName="ADMIN"},
+                new IdentityRole() { Name = "User", NormalizedName = "USER" });
         }
         public virtual DbSet<User> User { get; set; }
 

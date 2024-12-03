@@ -25,8 +25,10 @@ namespace SocialConnect.API
 
             // Register DbContext Service
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"))
+                options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"))
+
             );
+
             ////builder.Services.AddSwaggerGen(c => {
             //c.SwaggerDoc("v1", new OpenApiInfo
             //    {

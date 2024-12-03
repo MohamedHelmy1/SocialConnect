@@ -11,7 +11,7 @@ namespace SocialConnect.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+   
     public class PostController : ControllerBase
     {
         UnitOfwork db;
@@ -21,7 +21,7 @@ namespace SocialConnect.API.Controllers
         }
         #region Get All
         [HttpGet]
-       // [Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         public IActionResult GetAll()
         {
             var posts = db.postrepository.Selectall();
@@ -34,6 +34,9 @@ namespace SocialConnect.API.Controllers
                     Title = post.Title,
                     Description = post.Description,
                     useId_fk = post.useId_fk,
+                    comments=post.comments,
+                    countReact=post.Reacts.Count()
+                    
 
                 };
 
@@ -57,6 +60,8 @@ namespace SocialConnect.API.Controllers
                 Title = post.Title,
                 Description = post.Description,
                 useId_fk = post.useId_fk,
+                comments = post.comments,
+                countReact = post.Reacts.Count()
 
             };
             return Ok(po);
@@ -64,7 +69,7 @@ namespace SocialConnect.API.Controllers
         #endregion
         #region Add Post
         [HttpPost]
-       // [Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [SwaggerResponse(201, "post created", typeof(Post))]
         [SwaggerResponse(400, "Post not found or not valid data")]
         [Consumes("application/json")]
@@ -84,7 +89,7 @@ namespace SocialConnect.API.Controllers
                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var post = new Post()
                 {
-                    Id=new Guid().ToString(),
+                    Id= $"{Guid.NewGuid():N}_{DateTime.UtcNow:yyyyMMddHHmmssfff}",
                     Title = po.Title,
                     Description = po.Description,
                     useId_fk = userId,
@@ -150,7 +155,61 @@ namespace SocialConnect.API.Controllers
             return Ok();
         }
         #endregion
-       
+        #region Add React to post
+        [HttpPost(" React/{id}")]
+
+        [Authorize(Roles = "User")]
+        [SwaggerResponse(201, "post created", typeof(Post))]
+        [SwaggerResponse(400, "Post not found or not valid data")]
+        [Consumes("application/json")]
+        [SwaggerOperation(
+    Summary = "Create post",
+    Description = "Create post on PostTable",
+    Tags = new[] { "User Operations" }
+    )
+    ]
+        public IActionResult AddPostReact(string id, ReactDTO com)
+        {
+            if (com == null)
+                return BadRequest();
+
+            if (ModelState.IsValid)
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var post = new postReacts()
+                {
+                    Id = $"{Guid.NewGuid():N}_{DateTime.UtcNow:yyyyMMddHHmmssfff}",
+
+                    useId_fk = userId,
+                    CreatedAt = DateTime.Now,
+                    Fk_ReactId = com.Fk_ReactId,
+                    Fk_postId = id
+
+
+
+                };
+                db.postReactsrepository.Add(post);
+                db.Save();
+                return Created();
+            }
+            else
+                return BadRequest(ModelState);
+        }
+        #endregion
+        #region Delete React Post
+        [HttpDelete("React/{id}")]
+        [Authorize(Roles = "User")]
+        [SwaggerOperation(Summary = "Delete Post React", Tags = new[] { "User Operations" })]
+        public IActionResult DeleteReact(string id)
+        {
+            var com = db.postReactsrepository.GetById(id);
+            if (com == null) return NotFound();
+            db.postReactsrepository.Delete(com);
+            db.Save();
+            return Ok();
+        }
+        #endregion
+
 
 
 
