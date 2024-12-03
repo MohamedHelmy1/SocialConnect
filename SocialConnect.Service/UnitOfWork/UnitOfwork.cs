@@ -11,7 +11,9 @@ namespace SocialConnect.Service
         ApplicationDbContext db;
         GenericRepository<Post> Postrepository;
         CommentRepository Comment;
-       
+        PostRep PostRep;
+
+        ConversationRepository<Message> conversationRepository;
         GenericRepository<Comment> Commentrepository;
         GenericRepository<CommentReact> CommentReactsrepository;
         GenericRepository<postReacts> PostReactsrepository;
@@ -32,6 +34,17 @@ namespace SocialConnect.Service
                 return Postrepository;
             }
         }
+        public ConversationRepository<Message> Conversations
+        {
+            get
+            {
+                if (conversationRepository == null)
+                {
+                    conversationRepository = new ConversationRepository<Message>(db);
+                }
+                return conversationRepository;
+            }
+        }
         public CommentRepository comment
         {
             get
@@ -41,6 +54,17 @@ namespace SocialConnect.Service
                     Comment = new CommentRepository(db);
                 }
                 return Comment;
+            }
+        }
+        public PostRep postRep
+        {
+            get
+            {
+                if (PostRep == null)
+                {
+                    PostRep = new PostRep(db);
+                }
+                return PostRep;
             }
         }
         public GenericRepository<postReacts> postReactsrepository

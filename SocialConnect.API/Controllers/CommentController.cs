@@ -24,16 +24,15 @@ namespace SocialConnect.API.Controllers
         [HttpPost("{id}")]
        
         [Authorize(Roles = "User")]
-        [SwaggerResponse(201, "post created", typeof(Post))]
+        [SwaggerResponse(201, "Comment created", typeof(AddCommentDto))]
         [SwaggerResponse(400, "Post not found or not valid data")]
         [Consumes("application/json")]
         [SwaggerOperation(
-    Summary = "Create post",
-    Description = "Create post on PostTable",
+    Summary = "Add Comment to Post",
     Tags = new[] { "User Operations" }
     )
     ]
-        public IActionResult Add(string id,CommentDTO com)
+        public IActionResult Add(string id, AddCommentDto com)
         {
             if (com == null)
                 return BadRequest();
@@ -69,8 +68,8 @@ namespace SocialConnect.API.Controllers
         [SwaggerResponse(400, "Post not found or not valid data")]
         [Consumes("application/json")]
         [SwaggerOperation(
-    Summary = "Create post",
-    Description = "Create post on PostTable",
+    Summary = "Add React to comment",
+   
     Tags = new[] { "User Operations" }
     )
     ]
@@ -105,13 +104,12 @@ namespace SocialConnect.API.Controllers
         #region update Post
         [HttpPut("{id}")]
         [Authorize(Roles = "User")]
-        [SwaggerOperation(Summary = "Update post", Tags = new[] { "User Operations" })]
-        public IActionResult Edit(string id, Comment po)
+        [SwaggerOperation(Summary = "Update Post ", Tags = new[] { "User Operations" })]
+        public IActionResult Edit(string id, AddCommentDto po)
         {
             if (po == null)
                 return BadRequest();
-            if (po.Id != id)
-                return BadRequest();
+           
 
             var CommentExists = db.commentrepository.GetById(id);
             if (CommentExists == null)
@@ -156,7 +154,7 @@ namespace SocialConnect.API.Controllers
         #region Delete React Comment
         [HttpDelete("React/{id}")]
         [Authorize(Roles = "User")]
-        [SwaggerOperation(Summary = "Delete Comment", Tags = new[] { "User Operations" })]
+        [SwaggerOperation(Summary = "Comment React", Tags = new[] { "User Operations" })]
         public IActionResult DeleteReact(string id)
         {
             var com = db.commentReactsrepository.GetById(id);
@@ -168,6 +166,12 @@ namespace SocialConnect.API.Controllers
         #endregion
         #region Get By ID
         [HttpGet("{id}")]
+        [SwaggerOperation(
+            Summary = "Get Post Comment",
+            Description = "Retrieve Comment using its unique identifier Post Id"
+        )]
+        [SwaggerResponse(200, "Task found", typeof(Comment))]
+        [SwaggerResponse(404, "Task not found")]
         [Authorize(Roles = "User")]
         public IActionResult Getbyid(string id)
         {

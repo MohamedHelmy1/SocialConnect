@@ -11,7 +11,7 @@ namespace SocialConnect.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-   
+    [Authorize]
     public class PostController : ControllerBase
     {
         UnitOfwork db;
@@ -20,8 +20,14 @@ namespace SocialConnect.API.Controllers
             this.db = db;
         }
         #region Get All
-        [HttpGet]
-        [Authorize(Roles = "User")]
+        [HttpGet()]
+        // [Authorize(Roles = "User")]
+        [SwaggerOperation(
+            Summary = "Get all Post",
+            Description = "Retrieve a list of Posts with optional filtering"
+        )]
+        [SwaggerResponse(200, "Successfully retrieved Posts", typeof(List<PostDTO>))]
+
         public IActionResult GetAll()
         {
             var posts = db.postrepository.Selectall();
@@ -36,6 +42,71 @@ namespace SocialConnect.API.Controllers
                     useId_fk = post.useId_fk,
                     countReact=post.Reacts.Count()
                     
+                    
+
+                };
+
+                postsdto.Add(po);
+            }
+            if (postsdto.Count == 0)
+                return NotFound();
+            return Ok(postsdto);
+        }
+        [HttpGet("myPosts/")]
+        [SwaggerOperation(
+            Summary = "Get MY Post",
+            Description = "Retrieve a list of Posts"
+        )]
+        [SwaggerResponse(200, "Successfully retrieved Posts", typeof(List<PostDTO>))]
+
+        public IActionResult GetMyPpst()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? HttpContext.Session.GetString("UserId");
+
+            var posts = db.postRep.GetUserPost(userId);
+            List<PostDTO> postsdto = new List<PostDTO>();
+            foreach (var post in posts)
+            {
+                var po = new PostDTO()
+                {
+                    Id = post.Id,
+                    Title = post.Title,
+                    Description = post.Description,
+                    useId_fk = post.useId_fk,
+                    countReact = post.Reacts.Count()
+
+
+                };
+
+                postsdto.Add(po);
+            }
+            if (postsdto.Count == 0)
+                return NotFound();
+            return Ok(postsdto);
+        }
+        [HttpGet("UserPosts/{userId}")]
+        [SwaggerOperation(
+            Summary = "Get User Post",
+            Description = "Retrieve a list of Posts"
+        )]
+        [SwaggerResponse(200, "Successfully retrieved Posts", typeof(List<PostDTO>))]
+
+        public IActionResult GetuserPost(string userId)
+        {
+           
+
+            var posts = db.postRep.GetUserPost(userId);
+            List<PostDTO> postsdto = new List<PostDTO>();
+            foreach (var post in posts)
+            {
+                var po = new PostDTO()
+                {
+                    Id = post.Id,
+                    Title = post.Title,
+                    Description = post.Description,
+                    useId_fk = post.useId_fk,
+                    countReact = post.Reacts.Count()
+
 
                 };
 
@@ -47,9 +118,16 @@ namespace SocialConnect.API.Controllers
         }
         #endregion
         #region Get By ID
-        [HttpGet("{id}")]
-        [Authorize(Roles = "User")]
-        public IActionResult Getbyid(int id)
+        [HttpGet("getPostById{id}")]
+       
+        [SwaggerOperation(
+            Summary = "Get Post by Post ID",
+            Description = "Retrieve a specific task using its unique identifier"
+        )]
+        [SwaggerResponse(200, "Task found", typeof(PostDTO))]
+        [SwaggerResponse(404, "Task not found")]
+        // [Authorize(Roles = "User")]
+        public IActionResult Getbyid(string id)
         {
             var post = db.postrepository.GetById(id);
             if (post == null) return NotFound();
@@ -68,7 +146,7 @@ namespace SocialConnect.API.Controllers
         #endregion
         #region Add Post
         [HttpPost]
-        [Authorize(Roles = "User")]
+       // [Authorize(Roles = "User")]
         [SwaggerResponse(201, "post created", typeof(Post))]
         [SwaggerResponse(400, "Post not found or not valid data")]
         [Consumes("application/json")]
@@ -107,7 +185,7 @@ namespace SocialConnect.API.Controllers
         #endregion
         #region update Post
         [HttpPut("{id}")]
-        [Authorize(Roles = "User")]
+       // [Authorize(Roles = "User")]
         [SwaggerOperation(Summary = "Update post", Tags = new[] { "User Operations" })]
         public IActionResult Edit(string id, PostDTO po)
         {
@@ -144,7 +222,7 @@ namespace SocialConnect.API.Controllers
         #endregion 
         #region Delete Post
         [HttpDelete("{id}")]
-        [Authorize(Roles = "User")]
+       // [Authorize(Roles = "User")]
         [SwaggerOperation(Summary = "Delete post", Tags = new[] { "User Operations" })]
         public IActionResult Delete(string id)
         {
@@ -158,13 +236,13 @@ namespace SocialConnect.API.Controllers
         #region Add React to post
         [HttpPost(" React/{id}")]
 
-        [Authorize(Roles = "User")]
+       // [Authorize(Roles = "User")]
         [SwaggerResponse(201, "post created", typeof(Post))]
         [SwaggerResponse(400, "Post not found or not valid data")]
         [Consumes("application/json")]
         [SwaggerOperation(
-    Summary = "Create post",
-    Description = "Create post on PostTable",
+    Summary = "Add React post",
+    Description = "Create React on PostReact",
     Tags = new[] { "User Operations" }
     )
     ]
@@ -198,7 +276,7 @@ namespace SocialConnect.API.Controllers
         #endregion
         #region Delete React Post
         [HttpDelete("React/{id}")]
-        [Authorize(Roles = "User")]
+        //[Authorize(Roles = "User")]
         [SwaggerOperation(Summary = "Delete Post React", Tags = new[] { "User Operations" })]
         public IActionResult DeleteReact(string id)
         {
