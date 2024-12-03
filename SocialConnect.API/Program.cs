@@ -112,6 +112,15 @@ namespace SocialConnect.API
                     .RequireClaim(ClaimTypes.Role, "Admin", "User")
                     .RequireClaim(ClaimTypes.NameIdentifier));
             });
+            // Configure Session
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(10); // Session timeout
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -121,7 +130,7 @@ namespace SocialConnect.API
                 app.UseSwaggerUI();
             }
 
-
+            app.UseSession();
             app.UseHttpsRedirection();
             app.UseAuthentication();  // Added Authentication middleware before Authorization
             app.UseAuthorization();

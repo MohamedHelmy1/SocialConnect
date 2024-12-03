@@ -36,7 +36,8 @@ namespace SocialConnect.API.Controllers
                 {
                     var user = await userManager.FindByNameAsync(cs.username);
                     #region generate token
-
+                    // Save user ID in session
+                    HttpContext.Session.SetString("UserId", user.Id);
                     List<Claim> userdata = new List<Claim>();
                     userdata.Add(new Claim(ClaimTypes.Name, user.UserName));
                     userdata.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));

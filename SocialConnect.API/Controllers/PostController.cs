@@ -69,7 +69,7 @@ namespace SocialConnect.API.Controllers
         #endregion
         #region Add Post
         [HttpPost]
-        [Authorize(Roles = "User")]
+       // [Authorize(Roles = "User")]
         [SwaggerResponse(201, "post created", typeof(Post))]
         [SwaggerResponse(400, "Post not found or not valid data")]
         [Consumes("application/json")]
@@ -87,6 +87,7 @@ namespace SocialConnect.API.Controllers
             if (ModelState.IsValid)
             {
                 string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string userId2 = HttpContext.Session.GetString("UserId");
                 var post = new Post()
                 {
                     Id= $"{Guid.NewGuid():N}_{DateTime.UtcNow:yyyyMMddHHmmssfff}",
