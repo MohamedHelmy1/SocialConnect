@@ -21,7 +21,7 @@ namespace SocialConnect.API.Controllers
         }
         #region Get All
         [HttpGet()]
-        // [Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [SwaggerOperation(
             Summary = "Get all Post",
             Description = "Retrieve a list of Posts with optional filtering"

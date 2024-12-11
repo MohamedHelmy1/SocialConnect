@@ -41,7 +41,7 @@ namespace SocialConnect.API
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
             {
                 Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey,
+                Type = SecuritySchemeType.Http, //Apikey
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
@@ -86,7 +86,7 @@ namespace SocialConnect.API
                     IssuerSigningKey = secretKey,
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    ValidateLifetime = true
+                    ValidateLifetime = false  //true
                 };
             });
             builder.Services.Configure<IdentityOptions>(options =>
@@ -111,6 +111,9 @@ namespace SocialConnect.API
                 options.AddPolicy("JustAdmins", policy => policy
                     .RequireClaim(ClaimTypes.Role, "Admin")
                     .RequireClaim(ClaimTypes.NameIdentifier));
+                options.AddPolicy("JustUser", policy => policy
+                   .RequireClaim(ClaimTypes.Role, "User")
+                   .RequireClaim(ClaimTypes.NameIdentifier));
 
                 options.AddPolicy("UsersorAdmins", policy => policy
                     .RequireClaim(ClaimTypes.Role, "Admin", "User")
@@ -136,7 +139,7 @@ namespace SocialConnect.API
 
             app.UseSession();
             app.UseHttpsRedirection();
-            app.UseAuthentication();  // Added Authentication middleware before Authorization
+            app.UseAuthentication(); // Added Authentication middleware before Authorization
             app.UseAuthorization();
 
             app.MapControllers();
